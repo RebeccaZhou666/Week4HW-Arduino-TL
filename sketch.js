@@ -1,3 +1,4 @@
+// change the url to your own Teachable Machine upload url.
 const mySoundModelURL = 'https://storage.googleapis.com/teachable-machine-pubilshed-models/dc109011-dd0c-41c9-966b-fc7316154b41/model.json';
 let mySoundModel;
 let resultDiv;
@@ -5,7 +6,7 @@ let serial;          // variable to hold an instance of the serialport library
 let portName = '/dev/tty.usbmodem14101'; // fill in your serial port name here
 let outByte = 0;                       // for outgoing data
 
-function preload() {
+function preload() { // preload your model, images please see other example
   mySoundModel = ml5.soundClassifier(mySoundModelURL);
 }
 
@@ -39,10 +40,10 @@ function gotResults(err, results) {
     chart.data.datasets[0].data[0] = 0;//this update the value of may
     chart.update();
 
-    switch (results[0].label){
+    switch (results[0].label){ // check the result class that you want and send signals to arduino
       case 'open':{
         if(results[0].confidence > 0.5){
-          outByte = 255;
+          outByte = 255; // this is the signal to arduino
           console.log('outByte: ', outByte);
           serial.write(outByte);
         }
@@ -50,7 +51,7 @@ function gotResults(err, results) {
         chart.data.datasets[0].data[1] = results[0].confidence;
 
         if (results[1].label == 'close'){
-          chart.data.datasets[0].data[2] = results[1].confidence;
+          chart.data.datasets[0].data[2] = results[1].confidence; // this is for data visualization, not necessary
           chart.data.datasets[0].data[0] = 1-results[0].confidence-results[1].confidence;
         }else{
           chart.data.datasets[0].data[0] = results[1].confidence;
